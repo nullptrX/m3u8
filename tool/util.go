@@ -40,3 +40,15 @@ func DrawProgressBar(prefix string, proportion float32, width int, suffix ...str
 		prefix, strings.Repeat("■", pos), width-pos, "", proportion*100, strings.Join(suffix, ""))
 	fmt.Print("\r" + s)
 }
+
+// 判断所给路径文件/文件夹是否存在
+func Exists(path string) bool {
+	_, err := os.Stat(path)    //os.Stat获取文件信息
+	if err != nil {
+		if os.IsExist(err) {
+			return true
+		}
+		return false
+	}
+	return true
+}
