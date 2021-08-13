@@ -107,7 +107,7 @@ func (d *Downloader) Start(concurrency int) error {
 		limitChan <- struct{}{}
 	}
 	wg.Wait()
-	if err := d.merge(); err != nil {
+	if err := d.Merge(); err != nil {
 		return err
 	}
 	return nil
@@ -201,7 +201,7 @@ func (d *Downloader) back(segIndex int) error {
 	return nil
 }
 
-func (d *Downloader) merge() error {
+func (d *Downloader) Merge() error {
 	// In fact, the number of downloaded segments should be equal to number of m3u8 segments
 	missingCount := 0
 	for idx := 0; idx < d.segLen; idx++ {
@@ -242,7 +242,7 @@ func (d *Downloader) merge() error {
 	//_ = os.RemoveAll(d.tsFolder)
 
 	if mergedCount != d.segLen {
-		fmt.Printf("[warning] \n%d files merge failed", d.segLen-mergedCount)
+		fmt.Printf("[warning] \n%d files Merge failed", d.segLen-mergedCount)
 	}
 
 	fmt.Printf("\n[output] %s\n", mFilePath)

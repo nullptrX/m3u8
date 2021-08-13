@@ -16,6 +16,7 @@ var (
 	chanSize int
 	verbose  bool
 	key      string
+	merge    bool
 )
 
 func init() {
@@ -24,6 +25,7 @@ func init() {
 	flag.StringVar(&output, "o", "", "Output folder, required")
 	flag.BoolVar(&verbose, "v", false, "Verbose log, optional")
 	flag.StringVar(&key, "k", "", "Key path, optional")
+	flag.BoolVar(&merge, "m", false, "Merge files, optional")
 }
 
 func main() {
@@ -48,8 +50,15 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	if err := downloader.Start(chanSize); err != nil {
-		panic(err)
+
+	if merge {
+		if err := downloader.Merge(); err != nil {
+			panic(err)
+		}
+	} else {
+		if err := downloader.Start(chanSize); err != nil {
+			panic(err)
+		}
 	}
 	fmt.Println("Done!")
 }
