@@ -35,10 +35,16 @@ func main() {
 			os.Exit(-1)
 		}
 	}()
-	if url == "" {
+	if !strings.HasPrefix(url, "http") {
 		if len(flag.Args()) > 0 {
-			url = flag.Arg(0)
-		} else {
+			for _, arg := range flag.Args() {
+				if strings.HasPrefix(arg, "http") {
+					url = arg
+					break
+				}
+			}
+		}
+		if url == "" {
 			panicParameter("u")
 		}
 	}
