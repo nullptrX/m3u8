@@ -36,7 +36,11 @@ func main() {
 		}
 	}()
 	if url == "" {
-		panicParameter("u")
+		if len(flag.Args()) > 0 {
+			url = flag.Arg(0)
+		} else {
+			panicParameter("u")
+		}
 	}
 	//if output == "" {
 	//	panicParameter("o")
