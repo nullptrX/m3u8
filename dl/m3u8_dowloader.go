@@ -50,6 +50,7 @@ func NewTask(output string, url string, verbose bool, key string) (*Downloader, 
 	var folder string
 	// If no output folder specified, use current directory
 	if output == "" {
+		output = strconv.FormatInt(time.Now().Unix(), 10)
 		current, err := tool.CurrentDir()
 		if err != nil {
 			return nil, err

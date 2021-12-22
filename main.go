@@ -3,11 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
-	"strconv"
-	"time"
-
 	"github.com/nullptrx/v2/dl"
+	nurl "net/url"
+	"os"
+	"strings"
 )
 
 var (
@@ -20,7 +19,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&url, "u", "", "M3U8 URL, required")
+	flag.StringVar(&url, "u", "", "URL, required")
 	flag.IntVar(&chanSize, "c", 10, "Maximum number of occurrences")
 	flag.StringVar(&output, "o", "", "Output folder, required")
 	flag.BoolVar(&verbose, "v", false, "Verbose log, optional")
@@ -39,28 +38,39 @@ func main() {
 	if url == "" {
 		panicParameter("u")
 	}
-	if output == "" {
-		//panicParameter("o")
-		output = strconv.FormatInt(time.Now().Unix(), 10)
-	}
+	//if output == "" {
+	//	panicParameter("o")
+	//}
 	if chanSize <= 0 {
 		panic("parameter 'c' must be greater than 0")
 	}
-	downloader, err := dl.NewTask(output, url, verbose, key)
+
+	u, err := nurl.Parse(url)
 	if err != nil {
-		panic(err)
+		panicParameter("u")
 	}
 
-	if merge {
-		if err := downloader.Merge(); err != nil {
+	isM3u8 := strings.HasSuffix(u.Path, ".m3u8")
+
+	if isM3u8 {
+		downloader, err := dl.NewTask(output, url, verbose, key)
+		if err != nil {
 			panic(err)
 		}
+		if merge {
+			if err := downloader.Merge(); err != nil {
+				panic(err)
+			}
+		} else {
+			if err := downloader.Start(chanSize); err != nil {
+				panic(err)
+			}
+		}
+		fmt.Println("Done!")
 	} else {
-		if err := downloader.Start(chanSize); err != nil {
-			panic(err)
-		}
+		dl.DirectDownload(output, url, chanSize, verbose)
 	}
-	fmt.Println("Done!")
+
 }
 
 func panicParameter(name string) {
