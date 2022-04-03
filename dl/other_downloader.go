@@ -2,9 +2,13 @@ package dl
 
 import (
 	"fmt"
-	"github.com/monkeyWie/gopeed-core/pkg/base"
-	"github.com/monkeyWie/gopeed-core/pkg/download"
-	"github.com/nullptrx/v2/tool"
+	"github.com/nullptrx/v2/common"
+	"github.com/nullptrx/v2/link/pkg/base"
+	"github.com/nullptrx/v2/link/pkg/download"
+	//"github.com/monkeyWie/gopeed-core/pkg/base"
+	//"github.com/monkeyWie/gopeed-core/pkg/download"
+	"github.com/nullptrx/v2/m3u8/tool"
+
 	nurl "net/url"
 	"os"
 	"path/filepath"
@@ -41,6 +45,11 @@ func DirectDownload(output, url string, chansize int, verbose bool) {
 	finallyCh := make(chan error)
 	err := download.Boot().
 		URL(url).
+		Extra(&base.Extra{
+			Header: map[string]string{
+				"User-Agent": common.UserAegnt,
+			},
+		}).
 		Listener(func(event *download.Event) {
 			if event.Key == download.EventKeyProgress {
 				printProgress("Downloading", event)

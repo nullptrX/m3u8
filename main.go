@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/nullptrx/v2/common"
 	"github.com/nullptrx/v2/dl"
 	nurl "net/url"
 	"os"
@@ -16,6 +17,7 @@ var (
 	verbose  bool
 	key      string
 	merge    bool
+	proxy    string
 )
 
 func init() {
@@ -25,6 +27,7 @@ func init() {
 	flag.BoolVar(&verbose, "v", false, "Verbose log, optional")
 	flag.StringVar(&key, "k", "", "Key path, optional")
 	flag.BoolVar(&merge, "m", false, "Merge files, optional")
+	flag.StringVar(&proxy, "p", "", "Proxy url (such as socks://127.0.0.1:1080, http://127.0.0.1:1080), optional")
 }
 
 func main() {
@@ -35,6 +38,7 @@ func main() {
 			os.Exit(-1)
 		}
 	}()
+	common.Proxy = proxy
 	if !strings.HasPrefix(url, "http") {
 		if len(flag.Args()) > 0 {
 			for _, arg := range flag.Args() {
@@ -61,7 +65,6 @@ func main() {
 	}
 
 	isM3u8 := strings.HasSuffix(u.Path, ".m3u8")
-
 	if isM3u8 {
 		downloader, err := dl.NewTask(output, url, verbose, key)
 		if err != nil {

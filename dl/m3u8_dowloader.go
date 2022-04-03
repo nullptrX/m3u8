@@ -3,6 +3,8 @@ package dl
 import (
 	"bufio"
 	"fmt"
+	"github.com/nullptrx/v2/m3u8/parse"
+	"github.com/nullptrx/v2/m3u8/tool"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -10,9 +12,6 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-
-	"github.com/nullptrx/v2/parse"
-	"github.com/nullptrx/v2/tool"
 )
 
 const (
@@ -119,7 +118,7 @@ func (d *Downloader) download(segIndex int) error {
 	fPath := filepath.Join(d.tsFolder, tsFilename)
 	if !tool.Exists(fPath) {
 		tsUrl := d.tsURL(segIndex)
-		b, e := tool.Get(tsUrl)
+		b, e := tool.Get(d.result.Client, tsUrl)
 		if e != nil {
 			return fmt.Errorf("request %s, %s", tsUrl, e.Error())
 		}
