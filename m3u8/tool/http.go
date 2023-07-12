@@ -45,9 +45,8 @@ func Get(client *http.Client, url string) (io.ReadCloser, error) {
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("User-Agent", common.UserAegnt)
 	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8 coding\tgzip, deflate, br dnt\t1")
-	req.Header.Set("Accept-Language", "en-US,en;q=0.8")
+	req.Header.Set("Accept-Language", fmt.Sprintf("en-US,en;q=%.1f", common.QualityFactor))
 	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
-
 	resp, err := client.Do(req)
 
 	if err != nil {

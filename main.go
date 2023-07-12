@@ -11,14 +11,15 @@ import (
 )
 
 var (
-	url      string
-	output   string
-	chanSize int
-	verbose  bool
-	key      string
-	merge    bool
-	direct   bool
-	proxy    string
+	url            string
+	output         string
+	chanSize       int
+	verbose        bool
+	key            string
+	merge          bool
+	direct         bool
+	proxy          string
+	quality_factor float64
 )
 
 func init() {
@@ -30,6 +31,7 @@ func init() {
 	flag.BoolVar(&merge, "m", false, "Merge files, optional")
 	flag.BoolVar(&direct, "d", false, "Enable direct connect. no proxy if enabled.")
 	flag.StringVar(&proxy, "p", "socks5://127.0.0.1:7890", "Proxy url (such as socks://127.0.0.1:1080, http://127.0.0.1:1080), optional")
+	flag.Float64Var(&quality_factor, "qf", 0.8, "Quality factor for accept language.")
 }
 
 func main() {
@@ -43,6 +45,7 @@ func main() {
 	if !direct {
 		common.Proxy = proxy
 	}
+	common.QualityFactor = quality_factor
 	if !strings.HasPrefix(url, "http") {
 		if len(flag.Args()) > 0 {
 			for _, arg := range flag.Args() {
