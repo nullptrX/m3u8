@@ -47,7 +47,8 @@ func DirectDownload(output, url string, chansize int, verbose bool) {
 		URL(url).
 		Extra(&base.Extra{
 			Header: map[string]string{
-				"User-Agent": common.UserAegnt,
+				"User-Agent":      common.UserAegnt,
+				"Accept-Language": "en-US,en;q=0.8",
 			},
 		}).
 		Listener(func(event *download.Event) {
