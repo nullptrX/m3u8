@@ -17,6 +17,7 @@ var (
 	verbose  bool
 	key      string
 	merge    bool
+	direct   bool
 	proxy    string
 )
 
@@ -27,7 +28,8 @@ func init() {
 	flag.BoolVar(&verbose, "v", false, "Verbose log, optional")
 	flag.StringVar(&key, "k", "", "Key path, optional")
 	flag.BoolVar(&merge, "m", false, "Merge files, optional")
-	flag.StringVar(&proxy, "p", "", "Proxy url (such as socks://127.0.0.1:1080, http://127.0.0.1:1080), optional")
+	flag.BoolVar(&direct, "d", false, "Enable direct connect. no proxy if enabled.")
+	flag.StringVar(&proxy, "p", "socks5://127.0.0.1:7890", "Proxy url (such as socks://127.0.0.1:1080, http://127.0.0.1:1080), optional")
 }
 
 func main() {
@@ -38,7 +40,9 @@ func main() {
 			os.Exit(-1)
 		}
 	}()
-	common.Proxy = proxy
+	if !direct {
+		common.Proxy = proxy
+	}
 	if !strings.HasPrefix(url, "http") {
 		if len(flag.Args()) > 0 {
 			for _, arg := range flag.Args() {
