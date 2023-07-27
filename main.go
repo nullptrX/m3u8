@@ -20,6 +20,7 @@ var (
 	direct         bool
 	proxy          string
 	quality_factor float64
+	user_agent     string
 )
 
 func init() {
@@ -31,7 +32,8 @@ func init() {
 	flag.BoolVar(&merge, "m", false, "Merge files, optional")
 	flag.BoolVar(&direct, "d", false, "Enable direct connect. no proxy if enabled.")
 	flag.StringVar(&proxy, "p", "socks5://127.0.0.1:7890", "Proxy url (such as socks://127.0.0.1:1080, http://127.0.0.1:1080), optional")
-	flag.Float64Var(&quality_factor, "qf", 0.8, "Quality factor for accept language.")
+	flag.Float64Var(&quality_factor, "qf", common.QualityFactor, "Quality factor for accept language.")
+	flag.StringVar(&user_agent, "ua", common.UserAegnt, "User Agent.")
 }
 
 func main() {
@@ -46,6 +48,7 @@ func main() {
 		common.Proxy = proxy
 	}
 	common.QualityFactor = quality_factor
+	common.UserAegnt = user_agent
 	if !strings.HasPrefix(url, "http") {
 		if len(flag.Args()) > 0 {
 			for _, arg := range flag.Args() {
