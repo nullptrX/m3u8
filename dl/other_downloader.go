@@ -46,9 +46,7 @@ func DirectDownload(output, url string, chansize int, verbose bool) {
 	err := download.Boot().
 		URL(url).
 		Extra(&base.Extra{
-			Header: map[string]string{
-				"User-Agent": common.UserAegnt,
-			},
+			Header: common.Headers,
 		}).
 		Listener(func(event *download.Event) {
 			if event.Key == download.EventKeyProgress {

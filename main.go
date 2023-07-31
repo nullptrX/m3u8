@@ -5,50 +5,54 @@ import (
 	"fmt"
 	"github.com/nullptrx/v2/common"
 	"github.com/nullptrx/v2/dl"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	nurl "net/url"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 )
 
 var (
-	url            string
-	output         string
-	chanSize       int
-	verbose        bool
-	key            string
-	merge          bool
-	direct         bool
-	proxy          string
-	quality_factor float64
-	user_agent     string
+	url      string
+	output   string
+	chanSize int
+	verbose  bool
+	key      string
+	merge    bool
+	proxy    string
+	config   string
 )
 
 func init() {
 	flag.StringVar(&url, "u", "", "URL, required")
 	flag.IntVar(&chanSize, "c", 10, "Maximum number of occurrences")
-	flag.StringVar(&output, "o", "", "Output folder, required")
+	flag.StringVar(&output, "o", strconv.FormatInt(time.Now().Unix(), 10), "Output folder, required")
 	flag.BoolVar(&verbose, "v", false, "Verbose log, optional")
 	flag.StringVar(&key, "k", "", "Key path, optional")
 	flag.BoolVar(&merge, "m", false, "Merge files, optional")
-	flag.BoolVar(&direct, "d", false, "Enable direct connect. no proxy if enabled.")
-	flag.StringVar(&proxy, "p", "socks5://127.0.0.1:7890", "Proxy url (such as socks://127.0.0.1:1080, http://127.0.0.1:1080), optional")
-	flag.Float64Var(&quality_factor, "qf", common.QualityFactor, "Quality factor for accept language.")
-	flag.StringVar(&user_agent, "ua", common.UserAegnt, "User Agent.")
+	flag.StringVar(&proxy, "p", "", "Proxy url (such as socks://127.0.0.1:1080, http://127.0.0.1:1080), optional")
+	flag.StringVar(&config, "config", "dump.yaml", "Config file for http headers.")
 }
 
 func main() {
 	flag.Parse()
+	file, err := ioutil.ReadFile(config)
+	if err == nil {
+		var config map[string]string
+		err = yaml.Unmarshal(file, &config)
+		if err == nil {
+			common.Headers = config
+		}
+	}
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("[error]", r)
 			os.Exit(-1)
 		}
 	}()
-	if !direct {
-		common.Proxy = proxy
-	}
-	common.QualityFactor = quality_factor
-	common.UserAegnt = user_agent
+	common.Proxy = proxy
 	if !strings.HasPrefix(url, "http") {
 		if len(flag.Args()) > 0 {
 			for _, arg := range flag.Args() {

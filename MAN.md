@@ -15,3 +15,4 @@ lipo -archs dump
 
 
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o dump github.com/nullptrx/v2
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o dump github.com/nullptrx/v2
