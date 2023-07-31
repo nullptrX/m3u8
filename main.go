@@ -27,13 +27,13 @@ var (
 
 func init() {
 	flag.StringVar(&url, "u", "", "URL, required")
-	flag.IntVar(&chanSize, "c", 10, "Maximum number of occurrences")
+	flag.IntVar(&chanSize, "n", 10, "Maximum number of occurrences")
 	flag.StringVar(&output, "o", strconv.FormatInt(time.Now().Unix(), 10), "Output folder, required")
 	flag.BoolVar(&verbose, "v", false, "Verbose log, optional")
 	flag.StringVar(&key, "k", "", "Key path, optional")
 	flag.BoolVar(&merge, "m", false, "Merge files, optional")
 	flag.StringVar(&proxy, "p", "", "Proxy url (such as socks://127.0.0.1:1080, http://127.0.0.1:1080), optional")
-	flag.StringVar(&config, "config", "dump.yaml", "Config file for http headers.")
+	flag.StringVar(&config, "c", "dump.yaml", "Config file for http headers.")
 }
 
 func main() {
