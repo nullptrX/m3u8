@@ -123,7 +123,6 @@ func (d *Downloader) download(segIndex int) error {
 			return fmt.Errorf("request %s, %s", tsUrl, e.Error())
 		}
 		//noinspection GoUnhandledErrorResult
-		defer b.Close()
 		fTemp := fPath + tsTempFileSuffix
 		f, err := os.Create(fTemp)
 		if err != nil {

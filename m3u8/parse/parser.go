@@ -32,7 +32,6 @@ func FromURL(link string, keyPath string) (*Result, error) {
 		return nil, fmt.Errorf("request m3u8 URL failed: %s", err.Error())
 	}
 	//noinspection GoUnhandledErrorResult
-	defer body.Close()
 	m3u8, err := parse(body)
 	if err != nil {
 		return nil, err
@@ -68,7 +67,6 @@ func FromURL(link string, keyPath string) (*Result, error) {
 					return nil, fmt.Errorf("extract key failed: %s", err.Error())
 				}
 				keyByte, err = ioutil.ReadAll(resp)
-				_ = resp.Close()
 			}
 			fmt.Println("decryption key: ", base64.StdEncoding.EncodeToString(keyByte))
 			result.Keys[idx] = string(keyByte)
@@ -121,7 +119,6 @@ func FromFile(filePath string, keyPath string) (*Result, error) {
 					return nil, fmt.Errorf("extract key failed: %s", err.Error())
 				}
 				keyByte, err = ioutil.ReadAll(resp)
-				_ = resp.Close()
 			}
 			fmt.Println("decryption key: ", base64.StdEncoding.EncodeToString(keyByte))
 			result.Keys[idx] = string(keyByte)

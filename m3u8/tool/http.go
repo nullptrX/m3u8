@@ -10,7 +10,6 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/nullptrx/v2/common"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
 	urllib "net/url"
@@ -45,7 +44,7 @@ func BuildClient() *http.Client {
 	}
 }
 
-func Get(c *http.Client, url string) (io.ReadCloser, error) {
+func Get(c *http.Client, url string) (io.Reader, error) {
 	// Create a Resty Client
 	client := resty.NewWithClient(c)
 	//resp, err := client.R().
@@ -59,20 +58,20 @@ func Get(c *http.Client, url string) (io.ReadCloser, error) {
 	}
 	var body io.Reader
 	encoding := resp.Header().Get("Content-Encoding")
-	reader := bytes.NewReader(resp.Body())
+	buffer := resp.Body()
 	if encoding == "gzip" {
-		body, err = gzip.NewReader(reader)
+		body, err = gzip.NewReader(bytes.NewReader(buffer))
 		if err != nil {
 			// 不合法header
-			body = ioutil.NopCloser(reader)
+			body = bytes.NewReader(buffer)
 		}
 	} else if encoding == "br" {
-		body = brotli.NewReader(reader)
+		body = brotli.NewReader(bytes.NewReader(buffer))
 	} else if encoding == "deflate" {
-		body = flate.NewReader(reader)
+		body = flate.NewReader(bytes.NewReader(buffer))
 	} else {
-		body = ioutil.NopCloser(reader)
+		body = bytes.NewReader(buffer)
 	}
 
-	return io.NopCloser(body), nil
+	return body, nil
 }

@@ -2,10 +2,10 @@
 package parse
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"regexp"
 	"strconv"
 	"strings"
@@ -66,11 +66,14 @@ type Key struct {
 }
 
 func parse(reader io.Reader) (*M3u8, error) {
-	s := bufio.NewScanner(reader)
+	//s := bufio.NewScanner(reader)
+	//for s.Scan() {
+	//	lines = append(lines, s.Text())
+	//}
+
 	var lines []string
-	for s.Scan() {
-		lines = append(lines, s.Text())
-	}
+	buf, _ := ioutil.ReadAll(reader)
+	lines = strings.Split(string(buf), "\n")
 
 	var (
 		i     = 0
