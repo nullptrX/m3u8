@@ -61,14 +61,18 @@ func Get(c *http.Client, url string) (io.ReadCloser, error) {
 	encoding := resp.Header().Get("Content-Encoding")
 	reader := bytes.NewReader(resp.Body())
 	if encoding == "gzip" {
-		body, _ = gzip.NewReader(reader)
+		body, err = gzip.NewReader(reader)
+		if err != nil {
+			// 不合法header
+			body = ioutil.NopCloser(reader)
+		}
 	} else if encoding == "br" {
 		body = brotli.NewReader(reader)
 	} else if encoding == "deflate" {
 		body = flate.NewReader(reader)
-	}
-	if body == nil {
+	} else {
 		body = ioutil.NopCloser(reader)
 	}
+
 	return io.NopCloser(body), nil
 }
