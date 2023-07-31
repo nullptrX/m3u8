@@ -55,21 +55,19 @@ func Get(c *http.Client, url string) (io.ReadCloser, error) {
 		SetHeaders(common.Headers).
 		Get(url)
 	if resp.StatusCode() != 200 {
-		return nil, fmt.Errorf("http status code %d, error: %v", resp.StatusCode(), resp.Error())
+		return nil, fmt.Errorf("http status code %d, error: %v", resp.StatusCode(), err)
 	}
 	var body io.Reader
 	encoding := resp.Header().Get("Content-Encoding")
 	reader := bytes.NewReader(resp.Body())
 	if encoding == "gzip" {
-		body, err = gzip.NewReader(reader)
-		if err != nil {
-			return nil, fmt.Errorf("Failed to create gzip reader: %v", err)
-		}
+		body, _ = gzip.NewReader(reader)
 	} else if encoding == "br" {
 		body = brotli.NewReader(reader)
 	} else if encoding == "deflate" {
 		body = flate.NewReader(reader)
-	} else {
+	}
+	if body == nil {
 		body = ioutil.NopCloser(reader)
 	}
 	return io.NopCloser(body), nil

@@ -44,6 +44,14 @@ func main() {
 		err = yaml.Unmarshal(file, &config)
 		if err == nil {
 			common.Headers = config
+		} else {
+			if verbose {
+				fmt.Println("[warning]", err)
+			}
+		}
+	} else {
+		if verbose {
+			fmt.Println("[warning]", err)
 		}
 	}
 	defer func() {
