@@ -43,6 +43,7 @@ func DirectDownload(output, url string, chansize int, verbose bool) {
 	filename := filepath.Base(u.Path)
 
 	finallyCh := make(chan error)
+
 	err := download.Boot().
 		URL(url).
 		Extra(&base.Extra{

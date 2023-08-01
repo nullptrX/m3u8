@@ -38,12 +38,27 @@ func init() {
 
 func main() {
 	flag.Parse()
+	u, err := nurl.Parse(url)
+	if err != nil {
+		panicParameter("u")
+	}
+
 	file, err := ioutil.ReadFile(config)
 	if err == nil {
 		var config map[string]string
 		err = yaml.Unmarshal(file, &config)
 		if err == nil {
-			common.Headers = config
+			if config["Referer"] == "" {
+				config["Referer"] = fmt.Sprintf("%s://%s/", u.Scheme, u.Host)
+			}
+			for key, value := range config {
+				common.Headers[key] = value
+			}
+			if verbose {
+				for key, value := range common.Headers {
+					fmt.Printf("%s: %s\n", key, value)
+				}
+			}
 		} else {
 			if verbose {
 				fmt.Println("[warning]", err)
@@ -81,12 +96,7 @@ func main() {
 		panic("parameter 'c' must be greater than 0")
 	}
 
-	u, err := nurl.Parse(url)
-	if err != nil {
-		panicParameter("u")
-	}
-
-	isM3u8 := strings.HasSuffix(u.Path, ".m3u8")
+	isM3u8 := strings.Contains(u.Path, ".m3u8")
 	if isM3u8 {
 		downloader, err := dl.NewTask(output, url, verbose, key)
 		if err != nil {
