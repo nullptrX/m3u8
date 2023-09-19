@@ -2,6 +2,7 @@ package dl
 
 import (
 	"bufio"
+	"encoding/hex"
 	"fmt"
 	"github.com/nullptrx/v2/m3u8/parse"
 	"github.com/nullptrx/v2/m3u8/tool"
@@ -9,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -138,8 +140,18 @@ func (d *Downloader) download(segIndex int) error {
 		}
 		key, ok := d.result.Keys[sf.KeyIndex]
 		if ok && key != "" {
-			bytes, err = tool.AES128Decrypt(bytes, []byte(key),
-				[]byte(d.result.M3u8.Keys[sf.KeyIndex].IV))
+			iv := d.result.M3u8.Keys[sf.KeyIndex].IV
+			if strings.HasPrefix(iv, "0x") {
+				ivBytes, err := hex.DecodeString(strings.Replace(iv, "0x", "", 1))
+				if err != nil {
+					return fmt.Errorf("decryt: %s, %s", tsUrl, err.Error())
+				}
+				bytes, err = tool.AES128Decrypt(bytes, []byte(key),
+					ivBytes)
+			} else {
+				bytes, err = tool.AES128Decrypt(bytes, []byte(key),
+					[]byte(iv))
+			}
 			if err != nil {
 				return fmt.Errorf("decryt: %s, %s", tsUrl, err.Error())
 			}
