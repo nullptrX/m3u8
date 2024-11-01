@@ -1,6 +1,7 @@
 package parse
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"github.com/nullptrx/v2/m3u8/tool"
@@ -119,7 +120,7 @@ func FromFile(filePath string, keyPath string) (*Result, error) {
 				}
 				keyByte, err = ioutil.ReadAll(resp)
 			}
-			//fmt.Println("decryption key: ", base64.StdEncoding.EncodeToString(keyByte))
+			fmt.Println("decryption key: ", base64.StdEncoding.EncodeToString(keyByte))
 			result.Keys[idx] = string(keyByte)
 		default:
 			return nil, fmt.Errorf("unknown or unsupported cryption method: %s", key.Method)

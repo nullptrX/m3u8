@@ -15,14 +15,15 @@ import (
 )
 
 var (
-	url      string
-	output   string
-	chanSize int
-	verbose  bool
-	key      string
-	merge    bool
-	proxy    string
-	config   string
+	url       string
+	output    string
+	chanSize  int
+	verbose   bool
+	key       string
+	merge     bool
+	proxy     string
+	config    string
+	forceM3u8 bool
 )
 
 func init() {
@@ -34,6 +35,7 @@ func init() {
 	flag.BoolVar(&merge, "m", false, "Merge files, optional")
 	flag.StringVar(&proxy, "p", "", "Proxy url (such as socks://127.0.0.1:1080, http://127.0.0.1:1080), optional")
 	flag.StringVar(&config, "c", "dump.yaml", "Config file for http headers.")
+	flag.BoolVar(&forceM3u8, "f", false, "Force use m3u8 parser.")
 }
 
 func main() {
@@ -97,7 +99,7 @@ func main() {
 	}
 
 	isM3u8 := strings.Contains(u.Path, ".m3u8")
-	if isM3u8 {
+	if isM3u8 || forceM3u8 {
 		downloader, err := dl.NewTask(output, url, verbose, key)
 		if err != nil {
 			panic(err)
